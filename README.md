@@ -21,7 +21,7 @@ This application provides a web interface for:
 | RxJS | 6.3.3 | Reactive programming |
 | Bootstrap | 4.3.1 | UI styling framework |
 | ng-bootstrap | 4.1.2 | Bootstrap components for Angular |
-| ng-select | 2.19.0 | Enhanced select dropdowns |
+vb | ng-select | 2.19.0 | Enhanced select dropdowns |
 | Moment.js | 2.24.0 | Date/time manipulation |
 
 ## Project Structure
@@ -66,7 +66,6 @@ http://localhost:4200/
 ```bash
 # Development build
 ng build
-
 # Production build
 ng build --prod
 
@@ -140,6 +139,62 @@ See [API_REFERENCE.md](./API_REFERENCE.md) for complete API documentation.
 3. Service makes API request via ApiService
 4. Response parsed and returned as Observable
 5. Component updates view with data
+
+### Sequence Diagrams
+
+#### Order Management Flow
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant AppComponent
+    participant Router
+    participant OrdersPage
+    participant OrderService
+    participant ApiService
+
+    User->>AppComponent: Load app
+    AppComponent->>Router: Initialize routes
+    Router->>OrdersPage: Navigate to /orders
+    OrdersPage->>OrderService: ngOnInit
+    OrderService->>ApiService: getOrders()
+    ApiService-->>OrderService: Observable<{count, list}>
+    OrderService->>OrdersPage: Update cache & state
+    OrdersPage-->>User: Render order list with pagination
+
+    User->>OrdersPage: Click order row
+    OrdersPage->>Router: Navigate to /orders/view/:id
+    Router->>OrdersPage: Open OrderComponent modal
+    OrdersPage->>OrderService: getOrder(orderId)
+    OrderService->>ApiService: get(/orders/:id)
+    ApiService-->>OrderService: Order object
+    OrderService->>OrdersPage: Retrieve events & meds
+    OrdersPage-->>User: Display order details in modal
+```
+
+#### Navigator Component Communication
+
+```mermaid
+sequenceDiagram
+    participant NavigatorComponent
+    participant IFrame
+    participant MessageService
+    participant Router
+
+    NavigatorComponent->>IFrame: Embed iframe
+    NavigatorComponent->>MessageService: watchOutbox()
+    MessageService-->>NavigatorComponent: outbox Subject
+    NavigatorComponent->>Router: Subscribe to router events
+
+    Router->>NavigatorComponent: Router event (navigation)
+    NavigatorComponent->>NavigatorComponent: watchLocation()
+    NavigatorComponent->>IFrame: postMessage(location)
+
+    IFrame->>NavigatorComponent: User clicks nav item
+    NavigatorComponent->>NavigatorComponent: onMessage(event)
+    NavigatorComponent->>MessageService: takeMessage()
+    NavigatorComponent->>Router: Navigate based on message
+```
 
 ## Development
 
