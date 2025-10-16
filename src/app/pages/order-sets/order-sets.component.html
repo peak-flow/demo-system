@@ -1,0 +1,25 @@
+<div id="order-set-actions">
+  <button type="button" class="btn btn-outline-primary" id="create-order-set" routerLink="new">New test set</button>
+  <input id="search-order-sets" class="form-control" placeholder="search test sets" (keyup)="searchTestSet($event)"/>
+</div>
+<div id="order-sets">
+  <table class="table table-hover">
+    <thead class="bg-secondary text-white">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let orderSet of orderSets.list[page]" class="order-set" [routerLink]="['view', orderSet.id]" class="pointer">
+        <td>{{orderSet.id}}</td>
+        <td>{{orderSet.name}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="orderSetsLoading" class="spinner"></div>
+<ngb-pagination id="orderSets-pages" class="d-flex justify-content-center pages" [rotate]="true" [maxSize]="10"
+  *ngIf="orderSets.list[page]" (pageChange)="changePage($event)" [(page)]="page" [pageSize]="10"
+  [collectionSize]="orderSets.count"></ngb-pagination>
+<router-outlet></router-outlet>
