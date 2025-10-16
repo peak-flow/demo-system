@@ -1,0 +1,64 @@
+<ng-template #medSetModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="med-modal-title">Create med set</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div *ngIf="medSetLoading === true" class="spinner"></div>
+  <div *ngIf="medSetLoading === false" class="modal-body">
+    <div class="form" *ngIf="medSet">
+      <div class="form-group">
+        <label for="">Name</label>
+        <input type="text" class="form-control" [(ngModel)]="medSet.name" name="med-set-name" />
+      </div>
+      <div class="form-group">
+        <label for="">Template</label>
+        <select [(ngModel)]="medSet.template">
+          <option value="R1A">CARD</option>
+          <option value="R1P">SAMM</option>
+        </select>
+      </div>
+      <div *ngIf="medSet.template==='R1A'" class="enter-meds">
+        <label class="col-sm-4">CARD RX Meds:</label>
+        <ng-select class="col-sm-12" id="cardrx-select" name="cardrx" [items]="getCardRX()" bindLabel="name"
+          [multiple]="true" [hideSelected]="true" [(ngModel)]="cardRXChoice" placeholder="Select medications">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      </div>
+      <div *ngIf="medSet.template==='R1A'" class="enter-meds">
+        <label class="col-sm-4">CARD SR Meds:</label>
+        <ng-select class="col-sm-12" id="cardsr-select" name="cardsr" [items]="getCardSR()" bindLabel="name"
+          [multiple]="true" [hideSelected]="true" [(ngModel)]="cardSRChoice" placeholder="Select medications">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      </div>
+      <div *ngIf="medSet.template==='R1P'" class="enter-meds">
+        <label class="col-sm-4">SAMM RX Meds:</label>
+        <ng-select class="col-sm-12" id="samm-select" name="samm" [items]="getSAMM()" bindLabel="name" [multiple]="true"
+          [hideSelected]="true" [(ngModel)]="sammRXChoice" placeholder="Select medications">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      </div>
+      <div *ngIf="medSet.template==='R1P'" class="enter-meds">
+        <label class="col-sm-4">SAMM PRN Meds:</label>
+        <ng-select class="col-sm-12" id="samm-select" name="samm" [items]="getSAMM()" bindLabel="name" [multiple]="true"
+          [hideSelected]="true" [(ngModel)]="sammPRNChoice" placeholder="Select medications">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+      </div>
+      <div id="med-actions" class="action-buttons">
+        <button id="save-meds" class="btn btn-outline-primary float-right" (click)="saveMedSet()">Save</button>
+        <button class="btn btn-outline-danger float-right" (click)="delete()">Delete</button>
+      </div>
+  </div>
+  </div>
+</ng-template>

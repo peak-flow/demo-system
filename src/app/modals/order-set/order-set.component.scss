@@ -1,0 +1,30 @@
+.test-result {
+    height: 1.6rem;
+}
+
+.card>.table {
+    margin-bottom: 0;
+}
+
+// .card.panel {
+//     margin: 1rem;
+// }
+
+#actions>button.btn {
+    margin-right: 1rem;
+}
+
+.result-col {
+    width: 25%;
+}
+
+.delete-col {
+    width: 25px;
+    button.close span {
+        vertical-align: text-top;
+    }
+}
+
+th.delete-col button.close {
+  color: #999;
+}

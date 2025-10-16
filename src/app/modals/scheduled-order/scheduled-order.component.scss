@@ -1,0 +1,14 @@
+#period, #date {
+    width: 48%;
+    display: inline;
+    &#period {
+        margin-right: 2%;
+    }
+    &#date {
+        margin-left: 2%;
+    }
+}
+
+#time-label {
+    width: 100%;
+}

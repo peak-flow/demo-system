@@ -1,0 +1,139 @@
+<ng-template #orderModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="order-modal-title">View order</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="order">
+    <ngb-tabset type="pills">
+      <ngb-tab title="Status">
+        <ng-template ngbTabContent>
+          <div *ngIf="orderLoading === true" class="spinner"></div>
+          <div *ngIf="order.events">
+            <div *ngFor="let event of order.events" class="event" 
+              [ngClass]="[order.status.id === event.id ? 'current' : order.status.id < event.id ? 'future' : 'past', 
+                          event.message || event.id < 0 ? 'error' : '', event.skipped ? 'skipped' : '']">
+              <span *ngIf="event.id === 10 && event.time; else justName">
+                <a [href]="'/file/result/'+order.location.id+'/'+order.accessionId" target="_blank">{{event.name}}
+                  <span class="newWindow">&nbsp;&nbsp;&nbsp;</span>
+                </a>
+              </span>
+              <ng-template #justName>
+                {{event.name}}
+              </ng-template>
+              <span *ngIf="event.time && !event.skipped" class="event-time">{{event.time}}</span>
+              <span *ngIf="event.active" class="event-time">Sending...</span>
+              <span *ngIf="event.skipped" class="event-time">Skipped</span>
+                <span *ngIf="isActionEvent(event)">
+                <button (click)="doEventAction(event)" class="btn action-button btn-outline-primary btn-sm">
+                  {{event.actionName}}</button>
+              </span>
+              <div *ngIf="event.message" class="event-message">⚠️ {{event.message}}</div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Summary">
+        <ng-template ngbTabContent>
+          <b>Order ID:</b> {{order.id}}<br />
+          <b>Sample ID:</b> {{order.sampleId}}<br />
+          <b>Accession ID:</b> {{order.accessionId}}<br />
+          <b>Location:</b> [{{order.location.id}}] {{order.location.name}} ({{order.location.template}})<br />
+          <b>Doctor:</b> [{{order.doctor.id}}] {{order.doctor.name}}<br />
+          <b>Patient:</b> [{{order.patient.id}}] {{order.patient.name}}<br />
+          <b>Test Set:</b> [{{order.orderSet.id}}] {{order.orderSet.name}} <br />
+          <b>Med Set:</b> [{{order.medSet.id}}] {{order.medSet.name}}
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab title="Medications">
+        <ng-template ngbTabContent>
+          <b>Medication set:</b> {{order.medSet.name}}<br />
+          <b>Report template:</b> {{order.medSet.template}}<br />
+          <b>Medications:</b>
+          <ul>
+            <li *ngFor="let med of order.medSet.meds">{{displayMed(med)}}</li>
+          </ul>
+        </ng-template>
+      </ngb-tab>
+      <ngb-tab>
+        <ng-template ngbTabTitle><span *ngIf="(order.missing && order.missing.length) || (order.validation && order.validation.length)">⚠️</span>Tests</ng-template>
+        <ng-template ngbTabContent>
+          <div *ngIf="order.missing && order.missing.length">
+            <div class="profile card">
+              <div class="card-header"><b>Missing results</b> 
+                <button type="button" class="btn btn-sm btn-outline-secondary float-right" (click)="submitMissingResults()">Submit</button>
+              </div>
+              <table class="card-body table table-sm">
+                <thead>
+                  <tr>
+                    <th>Test</th>
+                    <th class="result-col">Result</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let test of order.missing" class="profile-test">
+                  <td>[{{test.code}}] {{test.name}}</td>
+                  <td class="result-col"><input type="text" class="form-control test-result" [(ngModel)]="test.result"
+                      name="order-set-name" /></td>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div *ngIf="order.validation && order.validation.length">
+            <div class="profile card">
+              <div class="card-header"><b>Results requiring manual validation</b></div>
+              <table class="card-body table table-sm">
+                <thead>
+                  <tr>
+                    <th>Test</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let test of order.validation" class="profile-test">
+                  <td>[{{test.code}}] {{test.name}}</td>
+                  <td class="invalid-result">{{test.result}}</td>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div class="profile card">
+              <div class="card-header"><b>Submitted results</b>
+              </div>
+              <table class="card-body table table-sm">
+                <thead>
+                  <tr>
+                    <th>Test</th>
+                    <th class="result-col">Result</th>
+                  </tr>
+                </thead>
+                <tbody *ngFor="let test of order.received" class="profile-test">
+                  <td>{{test.name}}</td>
+                  <td class="result-col">{{test.result}}</td>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <div class="profile card">
+                <div class="card-header"><b>Ordered tests</b>
+                </div>
+                <table class="card-body table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Test Code</th>
+                      <th>Name</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngFor="let test of order.orders" class="profile-test">
+                    <td>{{test.order_code}}</td>
+                    <td>{{test.order_name}}</td>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </ngb-tab>
+    </ngb-tabset>
+  </div>
+</ng-template>
