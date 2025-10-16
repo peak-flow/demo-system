@@ -753,6 +753,82 @@ getOrder(id: number): Observable<Order> {
 
 ---
 
+## Sequence Diagrams
+
+Visual representation of key application flows:
+
+### Order Management Flow
+
+This diagram shows the complete flow from loading the app to viewing order details:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant AppComponent
+    participant Router
+    participant OrdersPage
+    participant OrderService
+    participant ApiService
+
+    User->>AppComponent: Load app
+    AppComponent->>Router: Initialize routes
+    Router->>OrdersPage: Navigate to /orders
+    OrdersPage->>OrderService: ngOnInit
+    OrderService->>ApiService: getOrders()
+    ApiService-->>OrderService: Observable<{count, list}>
+    OrderService->>OrdersPage: Update cache & state
+    OrdersPage-->>User: Render order list with pagination
+
+    User->>OrdersPage: Click order row
+    OrdersPage->>Router: Navigate to /orders/view/:id
+    Router->>OrdersPage: Open OrderComponent modal
+    OrdersPage->>OrderService: getOrder(orderId)
+    OrderService->>ApiService: get(/orders/:id)
+    ApiService-->>OrderService: Order object
+    OrderService->>OrdersPage: Retrieve events & meds
+    OrdersPage-->>User: Display order details in modal
+```
+
+**Key Takeaways:**
+- Router handles navigation to pages and modals
+- OrderService acts as intermediary between components and API
+- Caching occurs in OrderService layer
+- Modal rendered as child route component
+
+### Navigator Component Communication
+
+This diagram illustrates the iframe bridge communication pattern:
+
+```mermaid
+sequenceDiagram
+    participant NavigatorComponent
+    participant IFrame
+    participant MessageService
+    participant Router
+
+    NavigatorComponent->>IFrame: Embed iframe
+    NavigatorComponent->>MessageService: watchOutbox()
+    MessageService-->>NavigatorComponent: outbox Subject
+    NavigatorComponent->>Router: Subscribe to router events
+
+    Router->>NavigatorComponent: Router event (navigation)
+    NavigatorComponent->>NavigatorComponent: watchLocation()
+    NavigatorComponent->>IFrame: postMessage(location)
+
+    IFrame->>NavigatorComponent: User clicks nav item
+    NavigatorComponent->>NavigatorComponent: onMessage(event)
+    NavigatorComponent->>MessageService: takeMessage()
+    NavigatorComponent->>Router: Navigate based on message
+```
+
+**Key Takeaways:**
+- postMessage API enables cross-origin communication
+- MessageService provides reactive Subject-based messaging
+- NavigatorComponent bridges Angular router and iframe content
+- Bidirectional communication: location sync and navigation
+
+---
+
 ## Further Reading
 
 - [Angular 7 Documentation](https://v7.angular.io/docs)
