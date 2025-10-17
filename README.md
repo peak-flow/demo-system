@@ -220,6 +220,13 @@ ng lint
 
 ## Documentation
 
+- **[ANGULAR_BEGINNER_GUIDE.md](./ANGULAR_BEGINNER_GUIDE.md)** - Step-by-step guide for Angular beginners
+  - How routing works with concrete examples
+  - How HTML templates load and display data
+  - How business logic and button clicks work
+  - How forms submit data
+  - How API calls flow through the application
+  - Complete walkthrough from user action to API response
 - [ANGULAR_GUIDE.md](./ANGULAR_GUIDE.md) - Angular 7.2 architecture guide
 - [API_REFERENCE.md](./API_REFERENCE.md) - Complete API endpoint documentation
 - [FILE_GUIDE.md](./FILE_GUIDE.md) - Detailed file-by-file guide
