@@ -1,0 +1,36 @@
+.order-set {
+    cursor: pointer;
+}
+
+#order-sets {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  table {
+    margin-bottom: 0px;
+
+    th {
+      border-top: 0px;
+    }
+  }
+}
+
+#orders-pages {
+  margin-top: 1rem;
+
+  ul.pagination {
+    margin-bottom: 0;
+  }
+}
+
+#order-set-actions {
+  #search-order-sets {
+    width: 25%;
+    float: right;
+    margin: 10px;
+  }
+
+  #create-order-set {
+    margin: 10px;
+  }
+}

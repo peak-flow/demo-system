@@ -1,0 +1,86 @@
+<div class="col-md-12 px-0" id="order-actions">
+  <button type="button" class="btn btn-outline-primary" id="create-order" routerLink="new">Create order</button>   
+  <div class="input-group" id="search-orders">
+    <select class="col-sm-4 form-control" [(ngModel)]="query.searchBy" (change)="searchOptions()">
+        <option value="id">Order ID</option>
+        <option value="accessionId">Accession</option>
+        <option value="location.id">Location</option>
+        <option value="patient.name">Patient</option>
+        <option value="status.id">Status</option>
+        <option value="created">Created</option>
+    </select>
+    <input *ngIf="query.searchBy == 'id'" class="form-control" placeholder="Search by Order ID" (keyup)="searchOrders($event)" [(ngModel)]="query.term"/>
+    <input *ngIf="query.searchBy == 'accessionId'" class="form-control" placeholder="Search by Accession" (keyup)="searchOrders($event)" [(ngModel)]="query.term"/>
+    <select *ngIf="query.searchBy == 'location.id'" class="form-control" (change)="selectOrders($event)" [(ngModel)]="query.term">
+        <option value="" disabled>Select a Location</option>
+        <option value="6000">Dominion Demo 1</option>
+        <option value="6001">Dominion Demo 2</option>
+    </select>
+    <input *ngIf="query.searchBy == 'patient.name'" class="form-control" placeholder="Search by Patient" (keyup)="searchOrders($event)" [(ngModel)]="query.term"/>
+    <select *ngIf="query.searchBy == 'status.id'" class="form-control" (change)="selectOrders($event)" [(ngModel)]="query.term">
+        <option value="" disabled>Select a Status</option>
+      <option value="-2">Additional testing ordered</option>
+      <option value="1">Order created</option>  
+      <option value="2">Order sent to Copia</option>  
+      <option value="3">Order received by Copia</option>  
+      <option value="4">Medications sent</option>  
+      <option value="5">Order sent to LIS</option>  
+      <option value="6">Order received by LIS</option>  
+      <option value="7">Results sent to LIS</option>  
+      <option value="8">Results received by LIS</option>
+      <option value="9">Report printed in LIS</option>
+      <option value="10">Report printed in Connect</option>
+    </select>   
+    <div *ngIf="query.searchBy == 'created'" class="form-group form-inline">
+      <div class="input-group">
+        <span class="input-group-text">From</span>
+        <input class="form-control" placeholder="yyyy-mm-dd"
+          name="from" [(ngModel)]="fromDate" ngbDatepicker #from="ngbDatepicker">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="from.toggle()" type="button"></button>
+        </div>
+      </div>
+      <div class="input-group">
+          <span class="input-group-text">To</span>
+        <input class="form-control" placeholder="yyyy-mm-dd"
+          name="to" [(ngModel)]="toDate" ngbDatepicker #to="ngbDatepicker">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary calendar" (click)="to.toggle()" type="button"></button>
+        </div>
+      </div>
+      <button class="input-group btn btn-outline-primary" (click)="checkDate()" type="button">Search</button>
+    </div>
+  </div>
+</div>
+<div id="orders" *ngIf="orders.ordersPage(page)">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Accession</th>
+        <th>Location</th>
+        <th>Patient</th>
+        <th>Status</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders.ordersPage(page)" [routerLink]="['view', order.id]" class="pointer">
+          <td>{{order.id}}</td>
+          <td>{{order.accessionId || '[none]'}}</td>
+          <td>{{order.location.name}}</td>
+          <td>{{order.patient.name}}</td>
+          <td>{{order.status.name}}</td>
+          <td>{{order.created | date}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="orders.ordersLoading" class="spinner"></div>
+<ngb-pagination class="orders-pages d-flex justify-content-center" 
+  [rotate]="true" [maxSize]="5" *ngIf="(orders.ordersPage(page)) && !(query.searchBy == 'created')" (pageChange)="changePage($event)"
+  [(page)]="page" [pageSize]="5" [collectionSize]="orders.ordersCount(query)"></ngb-pagination>
+<ngb-pagination class="orders-pages d-flex justify-content-center" 
+[rotate]="true" [maxSize]="5" *ngIf="(orders.ordersPage(page)) && (query.searchBy == 'created')" (pageChange)="checkDate($event)"
+[(page)]="page" [pageSize]="5" [collectionSize]="orders.ordersCount(query)"></ngb-pagination>  
+<router-outlet></router-outlet>

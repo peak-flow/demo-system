@@ -1,0 +1,61 @@
+.event {
+    .event-time {
+        float: right;
+    }
+    &.current {
+        font-weight: bold;
+    }
+    &.future, &.skipped {
+        color: #999;
+    }
+}
+
+.action-button {
+    line-height: 0.75;
+    float: right;
+    margin-right: -5px;
+}
+
+.enter-meds {
+    margin-top: 50px;
+}
+
+#save-meds {
+    margin: 0 15px;
+}
+
+.error {
+    color: red;
+}
+
+.event-message {
+  color: gray;
+  font-size: 0.8rem;
+  width: 75%;
+  padding-left: 20px;
+}
+
+.card>.table {
+  margin-bottom: 0;
+}
+
+.test-result {
+  height: 1.6rem;
+}
+
+.result-col {
+  width: 25%;
+}
+
+.profile.card {
+    margin-top: 15px;
+}
+
+.invalid-result {
+    color: #f66;
+}
+.newWindow {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==) no-repeat center;
+  width: 1em;
+  height: 1em;
+}

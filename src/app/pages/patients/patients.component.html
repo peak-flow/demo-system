@@ -1,0 +1,45 @@
+<div id="patient-actions">
+  <button type="button" class="btn btn-outline-primary" id="create-patient" routerLink="new">New patient</button>
+  <input id="search-patients" class="form-control" placeholder="search patients" (keyup)="searchTestPatients($event)"/>
+</div>
+<div id="patients">
+    <table class="table table-hover">
+        <thead class="bg-secondary text-white">
+          <tr>
+            <th>Patient ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>DOB</th>
+            <th>Gender</th>
+            <th>Addr1</th>
+            <th>Addr2</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Country</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let testPatient of patients.list[page]" class="patient" [routerLink]="['view', testPatient.id]" class="pointer">
+              <td>{{testPatient.id}}</td>
+              <td>{{testPatient.first_name}}</td>
+              <td>{{testPatient.last_name}}</td>
+              <td>{{testPatient.dob}}</td>
+              <td>{{testPatient.sex}}</td>
+              <td>{{testPatient.addr1}}</td>
+              <td>{{testPatient.addr2}}</td>
+              <td>{{testPatient.city}}</td>
+              <td>{{testPatient.state}}</td>
+              <td>{{testPatient.zip}}</td>
+              <td>{{testPatient.country}}</td>
+              <td>{{testPatient.phone}}</td>
+            </tr>
+          </tbody>
+      </table>
+</div>
+<div *ngIf="patientsLoading" class="spinner"></div>
+<ngb-pagination id="patients-pages" class="d-flex justify-content-center pages" [rotate]="true" [maxSize]="10"
+  *ngIf="patients.list[page]" (pageChange)="changePage($event)" [(page)]="page" [pageSize]="10"
+  [collectionSize]="patients.count"></ngb-pagination>
+<router-outlet></router-outlet>

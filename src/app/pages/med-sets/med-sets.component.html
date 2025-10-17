@@ -1,0 +1,27 @@
+<div id="med-set-actions">
+  <button type="button" class="btn btn-outline-primary" id="create-med-set" routerLink="new">New medication set</button>
+  <input id="search-med-sets" class="form-control" placeholder="search med sets" (keyup)="searchMedSet($event)"/>
+</div>
+<div class="med-sets">
+  <table class="table table-hover">
+    <thead class="bg-secondary text-white">
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Template</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let medSet of medSets.list[page]" class="med-set" [routerLink]="['view', medSet.id]" class="pointer">
+        <td>{{medSet.id}}</td>
+        <td>{{medSet.name}}</td>
+        <td>{{medSet.template}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="medSetsLoading" class="spinner"></div>
+<ngb-pagination id="medSets-pages" class="d-flex justify-content-center pages" [rotate]="true" [maxSize]="10"
+  *ngIf="medSets.list[page]" (pageChange)="changePage($event)" [(page)]="page" [pageSize]="10"
+  [collectionSize]="medSets.count"></ngb-pagination>
+<router-outlet></router-outlet>

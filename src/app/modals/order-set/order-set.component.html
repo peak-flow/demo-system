@@ -1,0 +1,149 @@
+<ng-template #orderSetModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="order-modal-title">Create order set</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div *ngIf="orderSetLoading === true" class="spinner"></div>
+  <div *ngIf="orderSetLoading === false" class="modal-body">
+    <div class="form" *ngIf="orderSet">
+      <div class="form-group">
+        <label for=""><strong>Name</strong></label>
+        <input type="text" class="form-control" [(ngModel)]="orderSet.name" name="order-set-name"/>
+      </div>
+      <div *ngIf="(orderSet.panels && orderSet.panels.length > 0) || (orderSet.tdPanels && orderSet.tdPanels.length > 0)" id="orders">
+        <label for=""><strong>Orders</strong></label>
+        <div class="panel card" *ngIf="orderSet.panels && orderSet.panels.length > 0">
+          <div class="card-header bg-secondary text-light"><strong>Copia Orders</strong></div>
+          <table class="card-body table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let panel of orderSet.panels" class="panel-panel">
+              <td>{{panel.id}}</td>
+              <td>{{panel.name}}
+                  <button type="button" class="close" aria-label="Delete panel" (click)="deletePanel(orderSet.panels.indexOf(panel))">	
+                    <span aria-hidden="true">&times;</span>	
+                  </button>	
+              </td>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="orderSet.tdPanels && orderSet.tdPanels.length > 0" class="panel card">
+            <div class="card-header bg-secondary text-light"><strong>TD Orders</strong></div>
+            <table class="card-body table table-bordered table-sm">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                </tr>
+              </thead>
+              <tbody *ngFor="let panel of orderSet.tdPanels" class="panel-panel">
+                <td>{{panel.id}}</td>
+                <td>{{panel.name}}
+                    <button type="button" class="close" aria-label="Delete panel" (click)="deleteTdPanel(orderSet.tdPanels.indexOf(panel))">	
+                      <span aria-hidden="true">&times;</span>	
+                    </button>	
+                </td>
+              </tbody>
+            </table>
+        </div>
+      </div>
+      <div id="results" *ngIf="orderSet.results && orderSet.results.length">
+        <label for=""><strong>Results</strong></label>
+        <div class="panel card">
+          <div class="card-header bg-secondary text-light"><strong>TD Results</strong></div>
+          <table class="card-body table table-sm">
+            <thead>
+              <tr>
+                <th>Test</th>
+                <th class="result-col">Result</th>
+                <th class="result-col">Grouping</th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let result of orderSet.results" class="profile-test">
+              <td>{{result.id}}</td>
+              <td class="result-col"><input type="text" class="form-control test-result" [(ngModel)]="result.result"
+                name="order-set-name" /></td>
+              <td class="result-col"><input type="number" min="1" max="100" class="form-control test-result" [(ngModel)]="result.priority"
+                name="order-set-name" /></td>
+              <td><button type="button" class="result-col close" aria-label="Delete panel" (click)="deleteResult(orderSet.results.indexOf(result))">	
+                  <span aria-hidden="true">&times;</span>	
+                </button></td>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="actions" class="action-buttons">
+      <button class="btn btn-primary float-right" (click)="save()">Save</button>
+      <button class="btn btn-outline-secondary float-right" (click)="chooseResult()">Add result</button>
+      <button class="btn btn-outline-secondary float-right" (click)="choosePanel()">Add order</button>
+      <button class="btn btn-outline-danger float-right" (click)="deleteOrderSet()">Delete</button>
+    </div>
+  </div>
+</ng-template>
+<ng-template #addPanelModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title panel-modal-title">Add {{addingPanel ? 'Order' : 'Result'}}</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="addingPanel">
+        <div class="row">
+            <label class="col-sm-6" for="selectOption">Please select a search option: </label>
+            <select id="selectOption" class="col-sm-4" [(ngModel)]="selectionOption" (change)="updateOptions()">
+                <option value="profile">Copia Profile</option>
+                <option value="test">Copia Test</option>
+                <option value="td_test">TD Test</option>
+            </select>
+        </div>
+        <br>
+        <ng-select id="profile-select" name="profile" [items]="profileList" bindLabel="description"
+          [multiple]="false" [hideSelected]="true" [(ngModel)]="panelToAdd" [typeahead]="profileQuery"
+          placeholder="Select profile" *ngIf="selectionOption == 'profile'" (scrollToEnd)="scrollProfiles()">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <ng-select id="test-select" name="test" [items]="testList" bindLabel="description"
+          [multiple]="false" [hideSelected]="true" [(ngModel)]="panelToAdd" [typeahead]="testQuery"
+          placeholder="Select test" *ngIf="selectionOption == 'test'" (scrollToEnd)="scrollTests()">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <ng-select id="td-test-select" name="tdTest" [items]="tdTestList" bindLabel="description"
+          [multiple]="false" [hideSelected]="true" [(ngModel)]="tdPanelToAdd" [typeahead]="tdTestQuery"
+          placeholder="Select TD test" *ngIf="selectionOption == 'td_test'" (scrollToEnd)="scrollTdTests()">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            {{item.name}}
+          </ng-template>
+        </ng-select>
+        <br>
+        <div id="panel-actions">
+          <button class="btn btn-primary float-right" (click)="addProfileOrTest()">Add</button>
+        </div>
+    </div>
+    <div *ngIf="!addingPanel">
+      <ng-select id="result-select" name="result" [items]="resultList" bindLabel="description"
+          [multiple]="false" [hideSelected]="true" [(ngModel)]="resultToAdd" [typeahead]="resultQuery"
+          placeholder="Select result test" (scrollToEnd)="scrollResults()">
+        <ng-template ng-option-tmp ng-label-tmp let-item="item">
+          {{item.name}}
+        </ng-template>
+      </ng-select>
+      <br>
+      <div id="panel-actions">
+        <button class="btn btn-primary float-right" (click)="addResult()">Add</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<router-outlet name="add"></router-outlet>

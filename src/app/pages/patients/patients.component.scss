@@ -1,0 +1,32 @@
+.patient {
+  cursor: pointer;
+}
+
+#patients {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  table {
+    margin-bottom: 0px;
+
+    th {
+      border-top: 0px;
+    }
+  }
+}
+
+#patient-actions {
+  #search-patients {
+    width: 25%;
+    float: right;
+    margin: 10px;
+  }
+
+  #create-patient {
+    margin: 10px;
+  }
+}
+
+.pages {
+  margin-top: 30px;
+}

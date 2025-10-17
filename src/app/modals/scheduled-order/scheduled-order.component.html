@@ -1,0 +1,42 @@
+<ng-template #newScheduledOrderModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="order-modal-title">Recurring order</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div *ngIf="scheduledOrdersLoading === true" class="spinner"></div>
+  <div *ngIf="scheduledOrdersLoading === false" class="modal-body">
+    <form>
+      <div class="form-group" *ngFor="let name of searches">
+        <label for="">{{name.charAt(0).toUpperCase().concat(name.slice(1))}}</label>
+        <ng-select [name]="name" [items]="searchInfo[name].list" bindLabel="description" [multiple]="false"
+          [hideSelected]="true" [(ngModel)]="order[name]" [typeahead]="searchInfo[name].query"
+          [placeholder]="'Select ' + name" (scrollToEnd)="scroll(name)">
+          <ng-template ng-option-tmp ng-label-tmp let-item="item">
+            [{{item.id}}] {{item.name}}
+          </ng-template>
+        </ng-select>
+      </div>
+      <div class="form-group">
+        <label id="time-label">Order time <span class="enabled float-right"><input type="checkbox" name="enabled" [(ngModel)]="order.enabled" /> enabled</span></label>
+        <div id="day-or-date">
+          <select class="form-control" id="period" [(ngModel)]="order.period" name="period">
+            <option [value]="1">Weekly</option>
+            <option [value]="2">Monthly</option>
+          </select>
+          <select class="form-control" id="date" [(ngModel)]="order.day" name="weekday" *ngIf="order.period==1">
+            <option *ngFor="let date of days; let i = index" [value]="i">{{date}}</option>
+          </select>
+          <select class="form-control" id="date" [(ngModel)]="order.day" name="weekday" *ngIf="order.period==2">
+            <option *ngFor="let date of dates; let i = index" [value]="date">{{date}}</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <div id="order-actions" class="action-buttons">
+      <button class="btn btn-primary float-right" (click)="save()">Save</button>
+      <button class="btn btn-outline-danger float-right" (click)="delete()">Delete</button>
+    </div>
+  </div>
+</ng-template>
